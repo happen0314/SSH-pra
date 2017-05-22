@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<class name="com.po.StudentPO" table="Student">
+		<id name="id" type="long" column="ID">
+			<generator class="native" />
+		</id>
+		<property name="name" type="string" column="NAME" not-null="true"/>
+		<property name="sex" type="string" column="SEX" />
+
+
+		<many-to-one name="classpo" column="CLASS_ID" class="com.po.ClassPO"
+			lazy="false" />
+	</class>
+
+
+
+</hibernate-mapping>

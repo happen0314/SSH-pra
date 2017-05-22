@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+ <!-- 定义数据源： -->
+  <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+	<property name="driverClass" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+	<property name="jdbcUrl" value="jdbc:sqlserver://localhost:1433;DatabaseName=SeDemo"/>
+	<property name="user" value="sa"/>
+	<property name="password" value="123456"/>
+	<property name="maxPoolSize" value="100"></property>
+	<property name="minPoolSize" value="1"/>
+	<property name="initialPoolSize" value="1"/>
+<property name="maxIdleTime" value="30"/>
+  </bean>   
+ 
+  <!-- 定义Spring的SessionFactory： -->
+   <bean id="sessionfactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+     <property name="dataSource" ref="dataSource"/>
+     <property name="hibernateProperties">
+	 	<value>
+			hibernate.dialect=org.hibernate.dialect.SQLServerDialect
+			hibernate.hbm2ddl.auto=update
+		</value>
+	</property>
+
+    <property name="mappingResources">
+    	<list>
+       		<value>com/po/ClassPO.hbm.xml</value>
+       		<value>com/po/StudentPO.hbm.xml</value>
+     	</list>
+   	</property> 
+  </bean>
+  
+   
+   <!-- 定义po -->
+   <bean id="classpo" class="com.po.ClassPO"></bean>
+   <bean id="studentpo" class="com.po.StudentPO"></bean>
+   
+   <!-- 定义dao -->
+   <bean id="classDao" class="com.dao.ClassDao" lazy-init="true">
+       <property name="classpo" ref="classpo"></property>
+       <property name="sessionFactory" ref="sessionfactory"></property>
+   </bean>
+   
+   <!-- 定义service -->
+   <bean id="mtService" class="com.dao.StudentClassService">
+       <property name="classpo" ref="classpo"></property>
+       <property name="studentpo1" ref="studentpo"></property>
+       <property name="studentpo2" ref="studentpo"></property>
+       <property name="students" ref="studentpo"></property>
+       <property name="classdao" ref="classDao"></property>
+   </bean>
+   <!-- 定义Action，vo不用在xml中定义，由Struts2管理 -->
+   <bean id="studentAction" class="com.action.StudentAction">
+       <property name="mtService" ref="mtService"></property>
+   </bean>
+</beans>
